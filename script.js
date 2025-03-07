@@ -1,4 +1,4 @@
-// Sample past trade data (Win-Loss Patterns & Frequency of Occurrence)
+// Sample past trade data (Weekly Patterns & Frequency of Occurrence)
 const tradeData = {
     "2W-3L": 9, "3W-2L": 8, "1W-3L": 8, "1W-4L": 5,
     "3W-1L": 4, "2W-2L": 4, "1W-1L": 4, "0W-4L": 3,
@@ -9,45 +9,58 @@ const tradeData = {
 
 let probabilityChart; // Global variable for Chart.js instance
 
-// Function to analyze past data and predict next trade outcome
+// Function to analyze past data based on entered daily trades
 function predictNextTrade() {
-    const wins = parseInt(document.getElementById("wins").value);
-    const losses = parseInt(document.getElementById("losses").value);
-    const key = wins + "W-" + losses + "L";
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+    let winCount = 0, lossCount = 0, tradedDays = 0;
 
-    if (!tradeData[key]) {
-        document.getElementById("result").innerText = "No historical data available for this pattern.";
+    days.forEach(day => {
+        const value = document.getElementById(day.toLowerCase()).value.trim().toUpperCase();
+        if (value === "W") winCount++;
+        else if (value === "L") lossCount++;
+        if (value) tradedDays++;
+    });
+
+    if (tradedDays === 0) {
+        document.getElementById("result").innerText = "Please enter at least one day's result.";
         return;
     }
 
+    const key = winCount + "W-" + lossCount + "L";
     const totalWeeks = Object.values(tradeData).reduce((sum, freq) => sum + freq, 0);
-    const patternWeeks = tradeData[key];
 
-    // Calculate separate probabilities based on historical trends
+    // Calculate probabilities based on historical data
     const winWeeks = Object.entries(tradeData)
-        .filter(([pattern]) => pattern.startsWith((wins + 1) + "W"))
+        .filter(([pattern]) => pattern.startsWith((winCount + 1) + "W"))
         .reduce((sum, [, freq]) => sum + freq, 0);
 
     const lossWeeks = Object.entries(tradeData)
-        .filter(([pattern]) => pattern.startsWith(wins + "W") && pattern.endsWith((losses + 1) + "L"))
+        .filter(([pattern]) => pattern.startsWith(winCount + "W") && pattern.endsWith((lossCount + 1) + "L"))
+        .reduce((sum, [, freq]) => sum + freq, 0);
+
+    const breakevenWeeks = Object.entries(tradeData)
+        .filter(([pattern]) => pattern.startsWith(winCount + "W") && pattern.endsWith(lossCount + "L"))
         .reduce((sum, [, freq]) => sum + freq, 0);
 
     const winProbability = ((winWeeks / totalWeeks) * 100).toFixed(2);
     const lossProbability = ((lossWeeks / totalWeeks) * 100).toFixed(2);
+    const breakevenProbability = ((breakevenWeeks / totalWeeks) * 100).toFixed(2);
 
     // Weighted random decision based on probabilities
     const randomPick = Math.random() * 100;
-    const predictedOutcome = randomPick < winProbability ? "Win" : "Loss";
+    let predictedOutcome = "Breakeven";
+    if (randomPick < winProbability) predictedOutcome = "Win";
+    else if (randomPick < winProbability + lossProbability) predictedOutcome = "Loss";
 
     document.getElementById("result").innerText = `Predicted Outcome: ${predictedOutcome}
-        (Win Probability: ${winProbability}%, Loss Probability: ${lossProbability}%)`;
+        (Win: ${winProbability}%, Loss: ${lossProbability}%, Breakeven: ${breakevenProbability}%)`;
 
     // Update probability chart
-    updateChart(winProbability, lossProbability);
+    updateChart(winProbability, lossProbability, breakevenProbability);
 }
 
 // Function to update or create the probability chart
-function updateChart(winProb, lossProb) {
+function updateChart(winProb, lossProb, breakevenProb) {
     const ctx = document.getElementById("probabilityChart").getContext("2d");
 
     if (probabilityChart) {
@@ -57,10 +70,10 @@ function updateChart(winProb, lossProb) {
     probabilityChart = new Chart(ctx, {
         type: "pie",
         data: {
-            labels: ["Win Probability", "Loss Probability"],
+            labels: ["Win Probability", "Loss Probability", "Breakeven Probability"],
             datasets: [{
-                data: [winProb, lossProb],
-                backgroundColor: ["#28a745", "#dc3545"]
+                data: [winProb, lossProb, breakevenProb],
+                backgroundColor: ["#28a745", "#dc3545", "#ffc107"]
             }]
         },
         options: {
