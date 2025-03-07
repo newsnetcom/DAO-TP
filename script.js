@@ -1,4 +1,4 @@
-// Sample past trade data
+// Sample past trade data (Win-Loss Patterns & Frequency of Occurrence)
 const tradeData = {
     "2W-3L": 9, "3W-2L": 8, "1W-3L": 8, "1W-4L": 5,
     "3W-1L": 4, "2W-2L": 4, "1W-1L": 4, "0W-4L": 3,
@@ -7,14 +7,21 @@ const tradeData = {
     "0W-3L": 1, "5W-0L": 0
 };
 
+// Function to calculate win/loss probabilities
 function calculateProbability() {
     const wins = document.getElementById("wins").value;
     const losses = document.getElementById("losses").value;
     const key = wins + "W-" + losses + "L";
     
     if (tradeData[key] !== undefined) {
-        const probability = ((tradeData[key] / 50) * 100).toFixed(2); // Example calculation
-        document.getElementById("result").innerText = `Probability: ${probability}%`;
+        const totalOccurrences = Object.values(tradeData).reduce((a, b) => a + b, 0);
+        const patternFrequency = tradeData[key];
+
+        // Calculate win and loss probabilities
+        const winProbability = ((patternFrequency / totalOccurrences) * 100).toFixed(2);
+        const lossProbability = (100 - winProbability).toFixed(2); // Complementary probability
+
+        document.getElementById("result").innerText = `Win Probability: ${winProbability}% | Loss Probability: ${lossProbability}%`;
     } else {
         document.getElementById("result").innerText = "Data not available for this pattern.";
     }
