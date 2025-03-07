@@ -9,27 +9,29 @@ const tradeData = {
 
 let probabilityChart; // Global variable for Chart.js instance
 
-// Function to calculate win/loss probabilities and update chart
+// Function to calculate separate win/loss probabilities
 function calculateProbability() {
     const wins = document.getElementById("wins").value;
     const losses = document.getElementById("losses").value;
     const key = wins + "W-" + losses + "L";
-    
-    if (tradeData[key] !== undefined) {
-        const totalOccurrences = Object.values(tradeData).reduce((a, b) => a + b, 0);
-        const patternFrequency = tradeData[key];
 
-        // Calculate probabilities
-        const winProbability = ((patternFrequency / totalOccurrences) * 100).toFixed(2);
-        const lossProbability = (100 - winProbability).toFixed(2);
+    const totalWeeks = Object.values(tradeData).reduce((sum, freq) => sum + freq, 0);
+    const winWeeks = Object.entries(tradeData)
+        .filter(([pattern]) => pattern.startsWith(wins + "W"))
+        .reduce((sum, [, freq]) => sum + freq, 0);
 
-        document.getElementById("result").innerText = `Win Probability: ${winProbability}% | Loss Probability: ${lossProbability}%`;
+    const lossWeeks = Object.entries(tradeData)
+        .filter(([pattern]) => pattern.endsWith(losses + "L"))
+        .reduce((sum, [, freq]) => sum + freq, 0);
 
-        // Update or create chart
-        updateChart(winProbability, lossProbability);
-    } else {
-        document.getElementById("result").innerText = "Data not available for this pattern.";
-    }
+    // Normalize probabilities
+    const winProbability = ((winWeeks / totalWeeks) * 100).toFixed(2);
+    const lossProbability = ((lossWeeks / totalWeeks) * 100).toFixed(2);
+
+    document.getElementById("result").innerText = `Win Probability: ${winProbability}% | Loss Probability: ${lossProbability}%`;
+
+    // Update or create chart
+    updateChart(winProbability, lossProbability);
 }
 
 // Function to update or create the probability chart
