@@ -7,7 +7,9 @@ const tradeData = {
     "0W-3L": 1, "5W-0L": 0
 };
 
-// Function to calculate win/loss probabilities
+let probabilityChart; // Global variable for Chart.js instance
+
+// Function to calculate win/loss probabilities and update chart
 function calculateProbability() {
     const wins = document.getElementById("wins").value;
     const losses = document.getElementById("losses").value;
@@ -17,12 +19,39 @@ function calculateProbability() {
         const totalOccurrences = Object.values(tradeData).reduce((a, b) => a + b, 0);
         const patternFrequency = tradeData[key];
 
-        // Calculate win and loss probabilities
+        // Calculate probabilities
         const winProbability = ((patternFrequency / totalOccurrences) * 100).toFixed(2);
-        const lossProbability = (100 - winProbability).toFixed(2); // Complementary probability
+        const lossProbability = (100 - winProbability).toFixed(2);
 
         document.getElementById("result").innerText = `Win Probability: ${winProbability}% | Loss Probability: ${lossProbability}%`;
+
+        // Update or create chart
+        updateChart(winProbability, lossProbability);
     } else {
         document.getElementById("result").innerText = "Data not available for this pattern.";
     }
+}
+
+// Function to update or create the probability chart
+function updateChart(winProb, lossProb) {
+    const ctx = document.getElementById("probabilityChart").getContext("2d");
+
+    if (probabilityChart) {
+        probabilityChart.destroy(); // Destroy previous chart instance
+    }
+
+    probabilityChart = new Chart(ctx, {
+        type: "pie",
+        data: {
+            labels: ["Win Probability", "Loss Probability"],
+            datasets: [{
+                data: [winProb, lossProb],
+                backgroundColor: ["#28a745", "#dc3545"]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
 }
