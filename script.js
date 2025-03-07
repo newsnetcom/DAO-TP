@@ -9,28 +9,40 @@ const tradeData = {
 
 let probabilityChart; // Global variable for Chart.js instance
 
-// Function to calculate separate win/loss probabilities
-function calculateProbability() {
-    const wins = document.getElementById("wins").value;
-    const losses = document.getElementById("losses").value;
+// Function to analyze past data and predict next trade outcome
+function predictNextTrade() {
+    const wins = parseInt(document.getElementById("wins").value);
+    const losses = parseInt(document.getElementById("losses").value);
     const key = wins + "W-" + losses + "L";
 
+    if (!tradeData[key]) {
+        document.getElementById("result").innerText = "No historical data available for this pattern.";
+        return;
+    }
+
     const totalWeeks = Object.values(tradeData).reduce((sum, freq) => sum + freq, 0);
+    const patternWeeks = tradeData[key];
+
+    // Calculate separate probabilities based on historical trends
     const winWeeks = Object.entries(tradeData)
-        .filter(([pattern]) => pattern.startsWith(wins + "W"))
+        .filter(([pattern]) => pattern.startsWith((wins + 1) + "W"))
         .reduce((sum, [, freq]) => sum + freq, 0);
 
     const lossWeeks = Object.entries(tradeData)
-        .filter(([pattern]) => pattern.endsWith(losses + "L"))
+        .filter(([pattern]) => pattern.startsWith(wins + "W") && pattern.endsWith((losses + 1) + "L"))
         .reduce((sum, [, freq]) => sum + freq, 0);
 
-    // Normalize probabilities
     const winProbability = ((winWeeks / totalWeeks) * 100).toFixed(2);
     const lossProbability = ((lossWeeks / totalWeeks) * 100).toFixed(2);
 
-    document.getElementById("result").innerText = `Win Probability: ${winProbability}% | Loss Probability: ${lossProbability}%`;
+    // Weighted random decision based on probabilities
+    const randomPick = Math.random() * 100;
+    const predictedOutcome = randomPick < winProbability ? "Win" : "Loss";
 
-    // Update or create chart
+    document.getElementById("result").innerText = `Predicted Outcome: ${predictedOutcome}
+        (Win Probability: ${winProbability}%, Loss Probability: ${lossProbability}%)`;
+
+    // Update probability chart
     updateChart(winProbability, lossProbability);
 }
 
