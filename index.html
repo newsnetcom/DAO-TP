@@ -3,30 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trade Probability Calculator</title>
+    <title>Trade Probability Predictor</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("sw.js").then(() => {
-                console.log("Service Worker Registered");
-            });
-        }
-    </script>
 </head>
 <body>
     <div class="container">
-        <h1>Trade Probability Calculator</h1>
-        <p>Enter your weekly results:</p>
+        <h1>Trade Probability Predictor</h1>
+        <p>Enter your trade results for each day (W for Win, L for Loss, leave blank if no trade).</p>
+        
         <div class="input-group">
-            <input type="number" id="wins" placeholder="Wins">
-            <input type="number" id="losses" placeholder="Losses">
+            <label for="monday">Monday:</label>
+            <input type="text" id="monday" maxlength="1" placeholder="W / L">
         </div>
-        <button onclick="calculateProbability()">Check Probability</button>
-        <p id="result"></p>
+        <div class="input-group">
+            <label for="tuesday">Tuesday:</label>
+            <input type="text" id="tuesday" maxlength="1" placeholder="W / L">
+        </div>
+        <div class="input-group">
+            <label for="wednesday">Wednesday:</label>
+            <input type="text" id="wednesday" maxlength="1" placeholder="W / L">
+        </div>
+        <div class="input-group">
+            <label for="thursday">Thursday:</label>
+            <input type="text" id="thursday" maxlength="1" placeholder="W / L">
+        </div>
+        <div class="input-group">
+            <label for="friday">Friday:</label>
+            <input type="text" id="friday" maxlength="1" placeholder="W / L">
+        </div>
+
+        <button onclick="predictNextTrade()">Predict Next Trade</button>
+        
+        <div class="result-container">
+            <h2 id="result">Prediction will appear here</h2>
+        </div>
+
         <canvas id="probabilityChart"></canvas>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
