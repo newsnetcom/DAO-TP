@@ -1,3 +1,4 @@
+
 // Sample past trade data (Weekly Patterns & Frequency of Occurrence)
 const tradeData = {
     "2W-3L": 9, "3W-2L": 8, "1W-3L": 8, "1W-4L": 5,
@@ -11,11 +12,11 @@ let probabilityChart; // Global variable for Chart.js instance
 
 // Function to analyze past data based on entered daily trades
 function predictNextTrade() {
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+    const days = ["monday", "tuesday", "wednesday", "thursday", "friday"];
     let winCount = 0, lossCount = 0, tradedDays = 0;
 
     days.forEach(day => {
-        const value = document.getElementById(day.toLowerCase()).value.trim().toUpperCase();
+        const value = document.getElementById(day).value.trim().toUpperCase();
         if (value === "W") winCount++;
         else if (value === "L") lossCount++;
         if (value) tradedDays++;
@@ -52,8 +53,9 @@ function predictNextTrade() {
     if (randomPick < winProbability) predictedOutcome = "Win";
     else if (randomPick < winProbability + lossProbability) predictedOutcome = "Loss";
 
+    // Display results
     document.getElementById("result").innerText = `Predicted Outcome: ${predictedOutcome}
-        (Win: ${winProbability}%, Loss: ${lossProbability}%, Breakeven: ${breakevenProbability}%)`;
+    (Win: ${winProbability}%, Loss: ${lossProbability}%, Breakeven: ${breakevenProbability}%)`;
 
     // Update probability chart
     updateChart(winProbability, lossProbability, breakevenProbability);
