@@ -52,6 +52,9 @@ function predictNextTrade() {
     else if (randomPick < winProbability + lossProbability) predictedOutcome = "Loss";
 
     // Display results
-    document.getElementById("result").innerText = `Predicted Outcome: ${predictedOutcome}
-    (Win: ${winProbability}%, Loss: ${lossProbability}%, Breakeven: ${breakevenProbability}%)`;
+    const resultElement = document.getElementById("result");
+    resultElement.innerHTML = `<strong>Predicted Outcome:</strong> ${predictedOutcome}<br>
+                               <strong>Win Probability:</strong> ${winProbability}%<br>
+                               <strong>Loss Probability:</strong> ${lossProbability}%<br>
+                               <strong>Breakeven Probability:</strong> ${breakevenProbability}%`;
 }
