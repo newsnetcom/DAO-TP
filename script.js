@@ -8,8 +8,6 @@ const tradeData = {
     "0W-3L": 1, "5W-0L": 0
 };
 
-let probabilityChart; // Global variable for Chart.js instance
-
 // Function to analyze past data based on entered daily trades
 function predictNextTrade() {
     const days = ["monday", "tuesday", "wednesday", "thursday", "friday"];
@@ -56,31 +54,4 @@ function predictNextTrade() {
     // Display results
     document.getElementById("result").innerText = `Predicted Outcome: ${predictedOutcome}
     (Win: ${winProbability}%, Loss: ${lossProbability}%, Breakeven: ${breakevenProbability}%)`;
-
-    // Update probability chart
-    updateChart(winProbability, lossProbability, breakevenProbability);
-}
-
-// Function to update or create the probability chart
-function updateChart(winProb, lossProb, breakevenProb) {
-    const ctx = document.getElementById("probabilityChart").getContext("2d");
-
-    if (probabilityChart) {
-        probabilityChart.destroy(); // Destroy previous chart instance
-    }
-
-    probabilityChart = new Chart(ctx, {
-        type: "pie",
-        data: {
-            labels: ["Win Probability", "Loss Probability", "Breakeven Probability"],
-            datasets: [{
-                data: [winProb, lossProb, breakevenProb],
-                backgroundColor: ["#28a745", "#dc3545", "#ffc107"]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
 }
